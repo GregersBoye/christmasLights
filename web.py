@@ -2,8 +2,14 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse
 from datetime import datetime
 import time
+import json
 import RPi.GPIO as GPIO
-pinlist = [14,15,18,23,24, 25,8,7]
+
+json_settings = open('/home/pi/dev/lights/settings.json')
+settings = json.load(json_settings)
+
+pinlist = settings['pins']
+delay = settings['delay']/1000
 
 class SimpleHandler(BaseHTTPRequestHandler):
     GPIO.setmode(GPIO.BCM)
@@ -24,11 +30,11 @@ class SimpleHandler(BaseHTTPRequestHandler):
                 newState = GPIO.HIGH
                 
                 if settings&(2**i):
+                    time.sleep(delay)
                     newState = GPIO.LOW
                     result = "Turn on pin #"+str(i+1) + "(GPIO #" +str(val) +") value: "+ str(newState)
                 else:
                     result = "Turn off pin #"+str(i+1) + "(GPIO #" + str(val) + ") value: "+ str(newState)
-                time.sleep(.05)
                 print(result)
                 message  += result+ "<br />\r\n"
                 state = str(newState) + state
