@@ -1,24 +1,16 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse
 from datetime import datetime
-import time
+from stateList import StateList
 import json
-import RPi.GPIO as GPIO
 
 json_settings = open('/home/pi/dev/lights/settings.json')
 settings = json.load(json_settings)
 
-pinlist = settings['pins']
+pinlist = StateList(settings['pins'])
 delay = settings['delay']/1000
 
 class SimpleHandler(BaseHTTPRequestHandler):
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setwarnings(False)
-    for i, val in enumerate(pinlist):
-        print("Setting up pin #"+str(val)) 
-        GPIO.setup(val, GPIO.OUT)
-        GPIO.output(val, GPIO.HIGH)
-
     print("Listening on port 1224")
     print("~~~~~~~~~")
     def do_GET(self):
@@ -26,16 +18,8 @@ class SimpleHandler(BaseHTTPRequestHandler):
         if "setlights" in self.path:
             settings = int(self.path.split("/")[2])
             state = "";
-            for i, val in enumerate(pinlist):
-                newState = GPIO.HIGH
-                
-                if settings&(2**i):
-                    time.sleep(delay)
-                    newState = GPIO.LOW
-                result = "Pin #"+str(i+1) + "\t(GPIO #" + str(val) + ") \tHIGH: "+ str(not newState)
-                print(result)
-                state = str(newState) + state
-                GPIO.output(val, newState)
+
+            state = pinlist.setLights(settings, delay)
             print("~~~~~~~~~~") 
             self.write_log(state)
             self.show_status()
@@ -47,15 +31,11 @@ class SimpleHandler(BaseHTTPRequestHandler):
             self.end_headers()
 
     def show_status(self):
-        statusList = []
-        for i, val in enumerate(pinlist):
-            pinState = GPIO.input(val)
-            statusList.append({'state': not pinState, 'pin': val})
-
+        jsonStateList = pinlist.getStatus()
         self.send_response(200)
         self.send_header("Content-type", "text/json")
         self.end_headers()
-        self.wfile.write(bytes(json.dumps(statusList, indent=3), "utf-8"))
+        self.wfile.write(bytes(jsonStateList, "utf-8"))
 
     def write_log(self, state):
         today = datetime.now()
