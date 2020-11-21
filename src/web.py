@@ -1,7 +1,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse
 from datetime import datetime
-from stateList import StateList
+from models.stateList import StateList
 import json
 
 json_settings = open('/home/pi/dev/lights/settings.json')

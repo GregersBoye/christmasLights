@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO
 import json
 import time
-from pinState import PinState
+from models.pinState import PinState
 
 class StateList:
     def __init__(self, stateList):
