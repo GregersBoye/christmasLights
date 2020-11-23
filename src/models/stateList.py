@@ -11,11 +11,12 @@ class StateList:
         GPIO.setwarnings(False)
 
         for i, val in enumerate(stateList):
+            pin = PinState(val['pinNo'], GPIO.HIGH, val['name'])
+            
             print(f"Setting up pin#{str(pin.pinNo)}")
             GPIO.setup(pin.pinNo, GPIO.OUT)
             GPIO.output(pin.pinNo, GPIO.HIGH)
 
-            pin = PinState(val['pinNo'], GPIO.HIGH, val['name'])
             self.add(pin)
 
     def add(self, item):
