@@ -6,15 +6,17 @@ from models.pinState import PinState
 class StateList:
     def __init__(self, stateList):
         self.stateList = []
-
+        print(stateList)
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
 
         for i, val in enumerate(stateList):
-            print(f"Setting up pin#{str(val)}")
-            GPIO.setup(val, GPIO.OUT)
-            GPIO.output(val, GPIO.HIGH)
-            self.add(PinState(val, GPIO.HIGH))
+            print(f"Setting up pin#{str(pin.pinNo)}")
+            GPIO.setup(pin.pinNo, GPIO.OUT)
+            GPIO.output(pin.pinNo, GPIO.HIGH)
+
+            pin = PinState(val['pinNo'], GPIO.HIGH, val['name'])
+            self.add(pin)
 
     def add(self, item):
         self.stateList.append(item)

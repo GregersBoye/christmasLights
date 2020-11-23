@@ -1,4 +1,38 @@
 {
-	"delay": 10,
-	"pins": [14,15,18,23,24,25,8,7]
+	"delay": 0,
+	"pins": [
+		{
+			"pinNo": 14,
+			"name": "Affaldsstativ"
+		},
+		{
+			"pinNo": 15,
+			"name": "Træ"
+		},
+		{
+			"pinNo": 18,
+			"name": "Facade"
+		},
+		{
+			"pinNo": 23,
+			"name": ""
+		},
+		{
+			"pinNo": 24,
+			"name": ""
+		},
+		{
+			"pinNo": 25,
+			"name": ""
+		},
+		{
+			"pinNo":8,
+            "name": ""
+		},
+		{
+			"pinNo": 7,
+			"name":""
+		}
+	],
+	"modes": ["auto", "manual"]
 }
