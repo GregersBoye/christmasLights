@@ -43,7 +43,7 @@ class StateList:
         for i, val in enumerate(self.stateList):
             serializableList.append(val.serialize())
 
-        return json.dumps(serializableList, indent=3)
+        return serializableList
 
 
 

@@ -4,7 +4,7 @@ from datetime import datetime
 from models.stateList import StateList
 import json
 
-json_settings = open('/home/pi/dev/lights/settings.json')
+json_settings = open('./settings.json')
 settings = json.load(json_settings)
 
 pinlist = StateList(settings['pins'])
@@ -39,13 +39,15 @@ class SimpleHandler(BaseHTTPRequestHandler):
             else:
                 self.write_log("Request to set illegal mode "+newMode)
             self.show_status()
+        elif "getModes" in self.path:
+            self.send_allowed_modes()
         else:
             self.send_response(404)
             self.send_header("Content-type", "text/html")
             self.end_headers()
 
     def show_status(self):
-        jsonStateList = pinlist.getStatus()
+        jsonStateList = json.dumps({"stateList": pinlist.getStatus(), "mode": mode}, indent=3)
         self.send_response(200)
         self.send_header("Content-type", "text/json")
         self.send_header("Access-Control-Allow-Origin", "*")
@@ -60,7 +62,14 @@ class SimpleHandler(BaseHTTPRequestHandler):
         message = timestamp + ": "+text
         print(message)
         logFile.write(message + "\r\n")
-
+    def send_allowed_modes(self):
+        self.write_log("Request for allowed modes")
+        jsonModeList = json.dumps(allowedModes, indent=3)
+        self.send_response(200)
+        self.send_header("Content-type", "text/json")
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.end_headers()
+        self.wfile.write(bytes(jsonModeList, "utf-8"))
 if __name__ == "__main__":
     try:
         HTTPServer(("0.0.0.0", 1224), SimpleHandler).serve_forever()
